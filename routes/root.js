@@ -1,3 +1,5 @@
+import { HitStatisticsRecord } from "toad-cache"
+
 export default async function (fastify, opts) {
   fastify.get('/', async function (request, reply) {
     return { root: true }
@@ -64,5 +66,30 @@ export default async function (fastify, opts) {
   fastify.get('/hello', (req, res) => {
     const { name = 'World' } = req.query
     res.send(`Hello, ${name}!`)
+  })
+
+  fastify.get('/courses/:id', (req, res) => {
+    res.send(`Course ID: ${req.params.id}`)
+  })
+
+  fastify.get('/users/:id', (req, res) => {
+    const { id } = req.params
+    const user = state.users.find(user => user.id === parseInt(id))
+    if (!user) {
+      res.code(404).send({ message: 'User not found'})
+    }
+    else {
+      res.send(`User ID: ${req.params.id}`)
+    }
+  })
+
+  fastify.get('/courses/:courseId/lessons/:id', (req, res) => {
+    const { courseId, id } = req.params
+    res.send(`Couse ID: ${courseId}, lesson ID: ${id}`)
+  })
+
+  fastify.get('/users/:userId/posts/:postId', (req, res) => {
+    const { userId, postId } = req.params
+    res.send(`User ID: ${userId}, post ID: ${postId}`)
   })
 }
