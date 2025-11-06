@@ -62,7 +62,7 @@ export default async function (fastify, opts) {
   })
 
   fastify.get('/hello', (req, res) => {
-    const { name } = req.query
+    const { name = 'World' } = req.query
     res.send(`Hello, ${name}!`)
   })
 }
