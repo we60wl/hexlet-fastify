@@ -1,0 +1,16 @@
+head
+  link(href="/assets/bootstrap.min.css", rel="stylesheet")
+
+.container.wrapper.flex-grow-1
+  h1.header= 'Пользователи'
+  table.table.table-striped
+    tr
+      th Идентификатор пользователя
+      th Имя пользователя
+      th Емейл пользователя
+    each user, index in users
+      tr
+        td
+          a(href='/users/' + user.id) #{user.id}
+        td= user.username
+        td= user.email

@@ -1,5 +1,3 @@
-import { HitStatisticsRecord } from "toad-cache"
-
 export default async function (fastify, opts) {
   fastify.get('/', async function (request, reply) {
     return { root: true }
@@ -25,10 +23,7 @@ export default async function (fastify, opts) {
     reply.redirect('/', 302)
   })
 
-  fastify.get('/users', (req, res) => {
-    const page = req.query.page
-    res.send(req.originalUrl)
-  })
+  
 
   fastify.post('/users', (req, res) => {
     const page = req.query.page
@@ -47,7 +42,25 @@ export default async function (fastify, opts) {
     users: [
       {
         id: 1,
-        name: 'user',
+        username: 'user',
+        email: 'user@mail.ru'
+      },
+      {
+        id: 2,
+        username: 'Vladimir',
+        email: 'naxi03@mail.ru'
+      }
+    ],
+    courses: [
+      {
+        id: 1,
+        title: 'JS: Массивы',
+        description: 'Курс про массивы в JavaScript',
+      },
+      {
+        id: 2,
+        title: 'JS: Функции',
+        description: 'Курс про функции в JavaScript',
       },
     ],
   }
@@ -68,19 +81,45 @@ export default async function (fastify, opts) {
     res.send(`Hello, ${name}!`)
   })
 
+  fastify.get('/courses', (req, res) => {
+    const data = {
+      courses: state.courses,
+      header: 'Курсы по программированию'
+    }
+    res.view('src/views/courses/index', data)
+  })
+
   fastify.get('/courses/:id', (req, res) => {
-    res.send(`Course ID: ${req.params.id}`)
+    const { id } = req.params
+    const course = state.courses.find(({ id: courseId }) => courseId === parseInt(id))
+    if (!course) {
+      res.code(404).send({ message: 'Course not found' })
+      return
+    } 
+    const data = {
+      course,
+    }
+    // res.send(`Course ID: ${req.params.id}`)
+    res.view('src/views/courses/show', data)
+  })
+
+  fastify.get('/users', (req, res) => {
+    // const page = req.query.page
+    // res.send(req.originalUrl)
+    const data = {
+      users: state.users
+    }
+    res.view('src/views/users/index', data)
   })
 
   fastify.get('/users/:id', (req, res) => {
     const { id } = req.params
     const user = state.users.find(user => user.id === parseInt(id))
     if (!user) {
-      res.code(404).send({ message: 'User not found'})
+      return res.code(404).send({ message: 'User not found'})
     }
-    else {
-      res.send(`User ID: ${req.params.id}`)
-    }
+
+    return res.view('src/views/users/show', { user })
   })
 
   fastify.get('/courses/:courseId/lessons/:id', (req, res) => {
@@ -91,5 +130,9 @@ export default async function (fastify, opts) {
   fastify.get('/users/:userId/posts/:postId', (req, res) => {
     const { userId, postId } = req.params
     res.send(`User ID: ${userId}, post ID: ${postId}`)
+  })
+
+  fastify.get('/pug-template', (req, res) => {
+    res.view('src/views/index')
   })
 }

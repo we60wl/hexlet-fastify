@@ -1,0 +1,11 @@
+extends ../layouts/page.pug
+
+block content
+    a(href='/courses/new') New Course
+    each course in courses
+        div 
+            h2 
+                a(href=`/courses/${course.id}`)= course.title
+            p= course.description 
+block footer 
+    p Thanks for visiting our site
