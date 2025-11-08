@@ -1,11 +1,16 @@
-extends ../layouts/page.pug
+extends ../layout/page.pug
 
 block content
-    a(href='/courses/new') New Course
-    each course in courses
-        div 
-            h2 
-                a(href=`/courses/${course.id}`)= course.title
-            p= course.description 
-block footer 
-    p Thanks for visiting our site
+    .container.wrapper.flex-grow-1
+        form(role = 'form' method = 'GET' action = '/courses')
+            input(type = 'search', name = 'term', value = term)
+            input(type = 'submit' value = 'search')
+
+        a(href='/courses/new') New Course
+        if courses.length == 0
+            p Курсы пока что не найдены, попобуйте изменить параметры поиска
+        each course in courses
+            div 
+                h2 
+                    a(href=`/courses/${course.id}`)= course.title
+                p= course.description 

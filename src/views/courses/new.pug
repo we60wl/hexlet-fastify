@@ -1,0 +1,11 @@
+extends ../layout/page.pug
+
+block content 
+    form(action = '/courses', method = 'POST')
+        div 
+            label Название курса:
+                input(type = 'text', name = 'title')
+        div 
+            label Описание: 
+                input(type = 'text', name = 'description', required = true)
+        input(type = 'submit', value = 'Создать')

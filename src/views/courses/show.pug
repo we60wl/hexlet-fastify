@@ -1,7 +1,6 @@
-extends ../layouts/page.pug
+extends ../layout/page.pug
 
 block content
-    h1= course.title
-    p= course.description
-block footer 
-    a(href='https://github.com/we60wl') Github
+    .container.wrapper.flex-grow-1
+        h1= course.title
+        p= course.description

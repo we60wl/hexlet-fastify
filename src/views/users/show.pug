@@ -1,7 +1,8 @@
-head
-  link(href="/assets/bootstrap.min.css", rel="stylesheet")
-.container.wrapper.flex-grow-1
-  div.mx-auto.p-4.py-md-5
-    main
-      h2 #{user.username}
-      div #{user.email}
+extends ../layout/page.pug
+
+block content
+    .container.wrapper.flex-grow-1
+    div.mx-auto.p-4.py-md-5
+        main
+        h2 #{user.name}
+        div #{user.email}

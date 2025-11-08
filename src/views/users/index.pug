@@ -1,16 +1,20 @@
-head
-  link(href="/assets/bootstrap.min.css", rel="stylesheet")
+extends ../layout/page.pug
 
-.container.wrapper.flex-grow-1
-  h1.header= 'Пользователи'
+block content
+  form.input-group(role = 'form' method = 'GET' action = '/users')
+    input.form-control.rounded(type = 'search', name = 'term', value = term)
+    input.btn.btn-outline-primary(type = 'submit' value = 'search')
+
+  a(href = '/users/new') Create user
   table.table.table-striped
     tr
       th Идентификатор пользователя
       th Имя пользователя
       th Емейл пользователя
+
     each user, index in users
       tr
         td
           a(href='/users/' + user.id) #{user.id}
-        td= user.username
+        td= user.name
         td= user.email
