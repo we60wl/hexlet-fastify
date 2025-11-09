@@ -1,5 +1,6 @@
 import sanitizeHtml from 'sanitize-html';
 import _ from 'lodash'
+import * as yup from 'yup';
 
 const state = {
   courses: [],
@@ -172,10 +173,43 @@ export default async function (fastify, opts) {
     res.view('src/views/index')
   })
 
-  fastify.post('/courses', (req, res) => {
+  fastify.post('/courses', {
+    attachValidation: true,
+    schema: {
+      body: yup.object({
+        title: yup.string().min(2, 'Имя должно быть не меньше двух символов'),
+        description: yup.string().min(10)
+      })
+    },
+    validatorCompiler: ({ schema, method, url, httpPart }) => (data) => {
+      try {
+        const result = schema.validateSync(data)
+        return {
+          value: result
+        }
+      } catch (e) {
+        return {
+          error: e
+        }
+      }
+    }
+  }, (req, res) => {
+    const {
+      title, description
+    } = req.body
+
+    if (req.validationError) {
+      const data = {
+        title, description,
+        error: req.validationError
+      }
+      res.view('src/views/courses/new', data)
+      return
+    }
+  
     const course = { 
-      title: req.body.title, 
-      description: req.body.description, 
+      title: title.trim(), 
+      description: description, 
       id: _.uniqueId()
     }
   
@@ -190,15 +224,59 @@ export default async function (fastify, opts) {
     res.send(firstCourse.id)
   })
 
-  fastify.post('/users', (req, res) => {
+  fastify.post('/users', {
+    attachValidation: true,
+    schema: {
+      body: yup.object({
+        name: yup.string().min(2, 'Имя должно быть не меньше двух символов'),
+        email: yup.string().email(),
+        password: yup.string().min(5),
+        passwordConfirm: yup.string().min(5)
+      })
+    },
+    validatorCompiler: ({ schema, method, url, httpPart }) => (data) => {
+      if (data.password !== data.passwordConfirm) {
+        return {
+          error: Error('Password confirmation is not equal the password')
+        }
+      }
+      try {
+        const result = schema.validateSync(data)
+        return {
+          value: result
+        }
+      } catch( e) {
+        return {
+          error: e
+        }
+      }
+    },
+  }, (req, res) => {
+    const {
+      name,
+      email,
+      password,
+      passwordConfirm,
+    } = req.body
+  
+    if (req.validationError) {
+      const data = {
+        name, email, password, passwordConfirm,
+        error: req.validationError
+      }
+      res.view('src/views/users/new', data)
+      return
+    }
+
     const user = {
-      name: req.body.name.trim(),
-      email: req.body.email.trim().toLowerCase(),
-      password: req.body.password,
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      password: password,
       id: _.uniqueId()
     }
 
     state.users.push(user)
+  
     res.redirect('/users')
   })
 

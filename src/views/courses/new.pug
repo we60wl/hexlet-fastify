@@ -1,11 +1,13 @@
 extends ../layout/page.pug
 
 block content 
+    if error
+        p= error.message
     form(action = '/courses', method = 'POST')
         div 
             label Название курса:
-                input(type = 'text', name = 'title')
+                input(type = 'text', name = 'title', value = title)
         div 
             label Описание: 
-                input(type = 'text', name = 'description', required = true)
+                input(type = 'text', name = 'description', required = true, value = description)
         input(type = 'submit', value = 'Создать')
